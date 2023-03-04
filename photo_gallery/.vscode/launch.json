@@ -1,0 +1,47 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "qc iOS",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_qc.dart",
+            "args": [
+                "-v"
+            ]
+        },
+        {
+            "name": "uat iOS",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_uat.dart",
+            "args": [
+                "-v"
+            ]
+        },
+        {
+            "name": "prod iOS",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "-v"
+            ]
+        },
+        {
+            "name": "photo_gallery (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "photo_gallery (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

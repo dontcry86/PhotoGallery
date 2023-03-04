@@ -1,0 +1,88 @@
+import 'package:flutter/material.dart';
+import 'package:photo_gallery/app/pages/bottom_nav_bar/bottom_nav_bar.dart';
+import 'package:photo_gallery/app/pages/detail_page/detail_page.dart';
+import 'package:photo_gallery/app/pages/listing_page/listing_page.dart';
+import 'package:photo_gallery/app/pages/login_page/login_page.dart';
+import 'package:photo_gallery/domain/entities/photos_with_selected_index.dart';
+import 'app/pages/sample_menu_page/sample_menu_page.dart';
+import 'app/widgets/empty_state_wiew.dart';
+
+class RoutePaths {
+  static const String prefix = '/photo_gallery';
+  static const String bottomNavBar = '$prefix/bottom_nav_bar';
+  static const String listing = '$prefix/listing';
+  static const String detail = '$prefix/detail';
+  static const String login = '/login';
+  static const String logout = '/logout';
+  static const String sampleMenu = '$prefix/sample_menu';
+}
+
+class AppRouter {
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    final arguments = settings.arguments;
+
+    switch (settings.name) {
+      case RoutePaths.sampleMenu:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (context) => SampleMenuPage(),
+        );
+      case RoutePaths.bottomNavBar:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (context) => const HideOnScroll(),
+        );
+      case RoutePaths.listing:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (context) => ListingPage(
+            isHideBottomNavBar: (_) {},
+          ),
+        );
+      case RoutePaths.detail:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (context) => DetailPage(
+            data: arguments as PhotosWithSelectedIndex?,
+          ),
+        );
+      case RoutePaths.login:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (context) => const LoginPage(),
+        );
+
+      default:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (context) => Scaffold(
+            body: EmptyStateView(
+              title: 'Không tìm thấy nội dung',
+              image: '',
+              message: 'Nội dung này có thể đã bị xóa',
+              btnTitle: 'Thử lại',
+              btnWidth: 248.0,
+              onBtnPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        );
+    }
+  }
+}
+
+/// PopResult
+class PopWithResults<T> {
+  /// poped from this page
+  final String fromPage;
+
+  /// pop until this page
+  final String toPage;
+
+  /// results
+  final Map<String, T>? results;
+
+  /// constructor
+  PopWithResults({required this.fromPage, required this.toPage, this.results});
+}
