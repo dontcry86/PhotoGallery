@@ -10,7 +10,6 @@ class SampleMenuPage extends StatefulWidget {
 
 class _SampleMenuPageState extends State<SampleMenuPage> {
   List<String> listMenu = [
-    RoutePaths.bottomNavBar,
     RoutePaths.listing,
     RoutePaths.detail,
     RoutePaths.login,

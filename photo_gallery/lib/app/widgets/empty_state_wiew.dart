@@ -1,6 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
-import 'image_view.dart';
 
 class EmptyStateView extends StatefulWidget {
   final String? _image, _title, _btnTitle, _message;
@@ -20,7 +19,6 @@ class EmptyStateView extends StatefulWidget {
       this.btnWidth,
       this._messageMaxLine);
 
-  /// [messgeMaxLine] is maxLines of message text
   factory EmptyStateView(
           {String? image,
           String? title,
@@ -60,10 +58,12 @@ class _EmptyStateViewState extends State<EmptyStateView> {
   Widget get _image => widget._showImage
       ? Container(
           margin: const EdgeInsets.only(bottom: 24),
-          child: ImageView(
-            url: widget._image ?? '',
+          child: CachedNetworkImage(
             width: 192,
             height: 192,
+            imageUrl: widget._image ?? '',
+            placeholder: (context, url) => const CircularProgressIndicator(),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
         )
       : const SizedBox();

@@ -1,9 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_gallery/app/bloc/bloc.dart';
 import 'package:photo_gallery/app/widgets/base_page.dart';
-import 'package:photo_gallery/app/widgets/image_view.dart';
 import 'package:photo_gallery/common/cache_handler.dart';
 import 'package:photo_gallery/data/entities/photo.dart';
 import 'package:photo_gallery/di.dart';
@@ -24,14 +24,13 @@ class ListingPage extends BasePage {
 
 class _ListingPageState extends BasePageState<ListingPage>
     with AutomaticKeepAliveClientMixin<ListingPage> {
-  PhotoBloc _bloc = getIt.get();
+  final PhotoBloc _bloc = getIt.get();
 
   bool isFirstTimeFetching = false;
   bool isBookmarkMode = false;
 
   @override
   void onViewReady() {
-    super.onViewReady();
     if (!isFirstTimeFetching) {
       isFirstTimeFetching = !isFirstTimeFetching;
       _refresh();
@@ -105,8 +104,17 @@ class _ListingPageState extends BasePageState<ListingPage>
         bloc: _bloc,
         listener: (BuildContext context, BaseState state) {
           if (state is BaseErrorState) {
-            // popup a toast.
-            toast(state.errorMessage ?? '');
+            // show a notification at bottom of screen.
+            showSimpleNotification(const Text('Fetching failed!'),
+                background: Colors.redAccent,
+                position: NotificationPosition.bottom);
+          }
+
+          if (state is PhotoSuccessState) {
+            // show a notification at bottom of screen.
+            showSimpleNotification(const Text('Fetching successfully!'),
+                background: Colors.green,
+                position: NotificationPosition.bottom);
           }
         },
         child: BlocBuilder<PhotoBloc, BaseState>(
@@ -182,9 +190,6 @@ class _ListingPageState extends BasePageState<ListingPage>
   Widget _buildNoContentPage() {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBar(
-        title: '',
-      ),
       body: buildNoContentWidget(() {}),
     );
   }
@@ -194,9 +199,6 @@ class _ListingPageState extends BasePageState<ListingPage>
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBar(
-        title: '',
-      ),
       body: Text('Loading'),
     );
   }
@@ -204,9 +206,6 @@ class _ListingPageState extends BasePageState<ListingPage>
   Widget _buildErrorPage() {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBar(
-        title: '',
-      ),
       body: buildErrorWidget(
         () {
           _refresh();
@@ -218,9 +217,6 @@ class _ListingPageState extends BasePageState<ListingPage>
   Widget _buildNoInternetPage() {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBar(
-        title: '',
-      ),
       body: buildNoInternetWidget(
         () {
           _refresh();
@@ -264,7 +260,11 @@ class _CardPhotoWidgetState extends State<CardPhotoWidget> {
         child: Stack(
           alignment: Alignment.topRight,
           children: [
-            ImageView(url: widget.photo.thumbnailUrl ?? ''),
+            CachedNetworkImage(
+              imageUrl: widget.photo.thumbnailUrl ?? '',
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
             InkWell(
               onTap: () {
                 setState(() {

@@ -1,6 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_gallery/app/widgets/base_page.dart';
-import 'package:photo_gallery/app/widgets/image_view.dart';
 import 'package:photo_gallery/data/entities/photo.dart';
 import 'package:photo_gallery/domain/entities/photos_with_selected_index.dart';
 import 'package:photo_view/photo_view.dart';
@@ -44,7 +44,7 @@ class _DetailPageState extends BasePageState<DetailPage> {
     return GalleryPhotoViewWrapper(
       galleryItems: widget.data?.photos ?? [],
       backgroundDecoration: const BoxDecoration(
-        color: Colors.black,
+        color: Colors.white,
       ),
       initialIndex: widget.data?.selectedIndex ?? 0,
       scrollDirection: Axis.horizontal,
@@ -162,9 +162,11 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
             child: Container(
               width: 300,
               height: 300,
-              child: ImageView(
-                url: item.url ?? '',
-                height: 200.0,
+              child: CachedNetworkImage(
+                imageUrl: item.url ?? '',
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             childSize: const Size(300, 300),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:photo_gallery/app/widgets/empty_state_wiew.dart';
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 class BasePage extends StatefulWidget {
   const BasePage({Key? key}) : super(key: key);
@@ -43,7 +42,7 @@ class BasePageState<T extends BasePage> extends State<T> {
     if (isCloseIcon) {
       icon = Icon(Icons.close, color: color);
     } else {
-      icon = Icon(Icons.arrow_back, color: color);
+      icon = Icon(Icons.arrow_back_ios_new_rounded, color: color);
     }
 
     return IconButton(
@@ -94,11 +93,11 @@ class BasePageState<T extends BasePage> extends State<T> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           EmptyStateView(
-            title: 'Hệ thống có chút vấn đề nhỏ',
-            image: '',
-            message: 'Bạn vui lòng thử lại sau',
-            btnTitle: 'Thử lại',
+            title: 'SOMETHING WENT WRONG!',
+            message: 'Please try again later.',
+            btnTitle: 'Retry',
             btnWidth: 248.0,
+            showImage: false,
             onBtnPressed: ctaOnTap,
           ),
           const SizedBox(height: 90),
@@ -114,11 +113,12 @@ class BasePageState<T extends BasePage> extends State<T> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           EmptyStateView(
-            title: 'Không có kết nối mạng',
-            image: '',
-            message: 'Vui lòng kiểm tra lại tín hiệu Wifi hoặc 3G/4G bạn nhé',
-            btnTitle: 'Thử lại',
+            title: 'NO INTERNET CONNNECTION!',
+            message:
+                'Please check the signal of your Wifi or 3G/LTE connection.',
+            btnTitle: 'Retry',
             btnWidth: 248.0,
+            showImage: false,
             onBtnPressed: ctaOnTap,
           ),
           const SizedBox(height: 90),
@@ -130,11 +130,10 @@ class BasePageState<T extends BasePage> extends State<T> {
   Widget buildNoContentWidget(VoidCallback? ctaOnTap) {
     return SafeArea(
       child: EmptyStateView(
-        title: 'Không tìm thấy nội dung',
-        image: '',
-        message: 'Nội dung này không tồn tại',
-        btnTitle: 'Thử lại',
-        btnWidth: 248.0,
+        title: 'EMPTY!',
+        message: 'You have no photo.',
+        showImage: false,
+        showButton: false,
         onBtnPressed: () {
           if (ctaOnTap != null) {
             ctaOnTap();
@@ -143,47 +142,5 @@ class BasePageState<T extends BasePage> extends State<T> {
         },
       ),
     );
-  }
-
-  void showToast({String? message, required bool isSuccess}) {
-    if (isSuccess) {
-      final snackBar = SnackBar(
-        /// need to set following properties for best effect of awesome_snackbar_content
-        elevation: 0,
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.transparent,
-        content: AwesomeSnackbarContent(
-          title: 'On Snap!',
-          message:
-              'This is an example error message that will be shown in the body of snackbar!',
-
-          /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-          contentType: ContentType.failure,
-        ),
-      );
-
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(snackBar);
-    } else {
-      final snackBar = SnackBar(
-        /// need to set following properties for best effect of awesome_snackbar_content
-        elevation: 0,
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.transparent,
-        content: AwesomeSnackbarContent(
-          title: 'On Snap!',
-          message:
-              'This is an example error message that will be shown in the body of snackbar!',
-
-          /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-          contentType: ContentType.failure,
-        ),
-      );
-
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(snackBar);
-    }
   }
 }

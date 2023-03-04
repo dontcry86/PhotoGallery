@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:photo_gallery/app/pages/bottom_nav_bar/bottom_nav_bar.dart';
 import 'package:photo_gallery/app/pages/detail_page/detail_page.dart';
 import 'package:photo_gallery/app/pages/listing_page/listing_page.dart';
 import 'package:photo_gallery/app/pages/login_page/login_page.dart';
@@ -9,7 +8,6 @@ import 'app/widgets/empty_state_wiew.dart';
 
 class RoutePaths {
   static const String prefix = '/photo_gallery';
-  static const String bottomNavBar = '$prefix/bottom_nav_bar';
   static const String listing = '$prefix/listing';
   static const String detail = '$prefix/detail';
   static const String login = '/login';
@@ -27,11 +25,7 @@ class AppRouter {
           settings: settings,
           builder: (context) => SampleMenuPage(),
         );
-      case RoutePaths.bottomNavBar:
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (context) => const HideOnScroll(),
-        );
+
       case RoutePaths.listing:
         return MaterialPageRoute(
           settings: settings,
@@ -39,6 +33,7 @@ class AppRouter {
             isHideBottomNavBar: (_) {},
           ),
         );
+
       case RoutePaths.detail:
         return MaterialPageRoute(
           settings: settings,
@@ -46,6 +41,7 @@ class AppRouter {
             data: arguments as PhotosWithSelectedIndex?,
           ),
         );
+
       case RoutePaths.login:
         return MaterialPageRoute(
           settings: settings,
@@ -56,12 +52,12 @@ class AppRouter {
         return MaterialPageRoute(
           settings: settings,
           builder: (context) => Scaffold(
+            appBar: AppBar(),
             body: EmptyStateView(
-              title: 'Không tìm thấy nội dung',
-              image: '',
-              message: 'Nội dung này có thể đã bị xóa',
-              btnTitle: 'Thử lại',
-              btnWidth: 248.0,
+              title: 'ROUTE NOT FOUND !',
+              message: 'You have unsupported route.',
+              showImage: false,
+              showButton: false,
               onBtnPressed: () {
                 Navigator.pop(context);
               },
