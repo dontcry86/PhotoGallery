@@ -16,51 +16,22 @@ a Flutter App demo that displays a list of photos as a gallery by using public A
 
 ## Live preview
 
-https://dontcry86.github.io/PhotoGallery/#/
+https://dontcry86.github.io/#/photo_gallery/listing
 
 Note: this page is built with flutter-web. For a better user experience, please use a mobile device to open this link.
 
-## Installation
+## How to launch app
 
-Add `abc: ^0.0.1` to your `pubspec.yaml` dependencies. And import it:
-
-```dart
-import 'package:abc/abc.dart';
-```
-
-## How to use
-
-Simply create a `abc` widget, and pass the required params:
-
-```dart
-1 + 1 = 2
-```
+If you are using Visual Studio Code IDE. I have `.vscode\launch.json` file that contains multi configurations for iOS, Android, Chrome web and MacOS enviroment. You can setup the same configurations like that in Android Studio or execute the build commands in Terminal.
 
 ## Screenshot
 
-Demo 01:
+Demo:
 
-![simple](screenshot/demo01.gif)
+![Demo](screenshot/demo.gif)
 
-Demo 02:
-
-![image](screenshot/demo02.gif)
-
-All screenshots above can be found at the example project.
+The screenshot above can be found at the project.
 
 ## License
 
 MIT
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
