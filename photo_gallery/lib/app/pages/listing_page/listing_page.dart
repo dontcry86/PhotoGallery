@@ -5,7 +5,6 @@ import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:photo_gallery/app/bloc/bloc.dart';
 import 'package:photo_gallery/app/widgets/base_page.dart';
 import 'package:photo_gallery/app/utils/cache_handler.dart';
-import 'package:photo_gallery/common/constants.dart';
 import 'package:photo_gallery/data/entities/photo.dart';
 import 'package:photo_gallery/di.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -86,10 +85,11 @@ class _ListingPageState extends BasePageState<ListingPage>
                 background: Colors.redAccent,
                 position: NotificationPosition.bottom);
           }
-        } else if (state is FetchingPhotoSuccessState) {
-          // showSimpleNotification(const Text('Fetching successfully!'),
-          //     background: Colors.green, position: NotificationPosition.bottom);
         }
+        // else if (state is FetchingPhotoSuccessState) {
+        //   showSimpleNotification(const Text('Fetching successfully!'),
+        //       background: Colors.green, position: NotificationPosition.bottom);
+        // }
       },
       child: BlocBuilder<PhotoBloc, BaseState>(
         bloc: _bloc,

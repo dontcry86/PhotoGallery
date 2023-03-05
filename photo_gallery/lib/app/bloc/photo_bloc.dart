@@ -17,7 +17,6 @@ class PhotoBloc extends Cubit<BaseState> {
   }) : super(BaseInitialState());
 
   void getPhotosFromAPI() async {
-    emit(BaseLoadingState());
     try {
       final response = await useCase.getPhotos();
       if (response != null) {
@@ -29,8 +28,8 @@ class PhotoBloc extends Cubit<BaseState> {
       }
     } on DioError catch (e) {
       if (e.response == null) {
-        emit(
-            BaseErrorState(errorCode: networkErrorCode, errorMessage: 'error'));
+        emit(BaseErrorState(
+            errorCode: networkErrorCode, errorMessage: commonErrorMessage));
       } else {
         emit(BaseErrorState(
             errorCode: systemErrorCode, errorMessage: commonErrorMessage));
@@ -38,6 +37,43 @@ class PhotoBloc extends Cubit<BaseState> {
     } on Exception catch (_) {
       emit(BaseErrorState(errorMessage: commonErrorMessage));
     }
+
+    /* other way to implement */
+
+    // useCase.getPhotos().then((response) {
+    //   if (response != null) {
+    //     _mergeBookmarkCacheToPhotos(response);
+    //     photos = response;
+    //     emit(FetchingPhotoSuccessState(result: photos));
+    //   } else {
+    //     throw Exception('');
+    //   }
+    // }).catchError(
+    //   (Object obj) {
+    //     // non-200 error goes here.
+    //     switch (obj.runtimeType) {
+    //       case DioError:
+    //         // Here's the sample to get the failed response error code and message
+    //         final res = (obj as DioError).response;
+
+    //         if (res == null) {
+    //           emit(BaseErrorState(
+    //               errorCode: networkErrorCode,
+    //               errorMessage: commonErrorMessage));
+    //         } else {
+    //           emit(BaseErrorState(
+    //               errorCode: systemErrorCode,
+    //               errorMessage: commonErrorMessage));
+    //         }
+
+    //         break;
+    //       default:
+    //         emit(BaseErrorState(
+    //             errorCode: systemErrorCode, errorMessage: commonErrorMessage));
+    //         break;
+    //     }
+    //   },
+    // );
   }
 
   void _mergeBookmarkCacheToPhotos(List<Photo> photos) {
@@ -67,7 +103,6 @@ class PhotoBloc extends Cubit<BaseState> {
   }
 
   void unBookmarkAPhoto(Photo photo, bool isBookmarkMode) {
-    //emit(BaseLoadingState());
     photo.isBookmark = false;
 
     for (final item in (photos ?? [])) {

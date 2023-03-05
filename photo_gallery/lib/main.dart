@@ -16,7 +16,8 @@ void main() {
 
   Alice? alice;
 
-  final aliceGranted = kDebugMode && GetPlatform.isMobile;
+  final aliceGranted =
+      kDebugMode && GetPlatform.isMobile && !FlavorConfig.isProd();
 
   if (aliceGranted) {
     alice = Alice();

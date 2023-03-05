@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_gallery/app/widgets/base_page.dart';
 import 'package:photo_gallery/data/entities/photo.dart';
 import 'package:photo_gallery/domain/entities/photos_with_selected_index.dart';
@@ -125,7 +124,7 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
               child: Container(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  "Photo index: ${currentIndex + 1}",
+                  "Photo index: ${currentIndex + 1}/${widget.galleryItems.length}",
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 17.0,

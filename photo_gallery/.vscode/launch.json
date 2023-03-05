@@ -4,8 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
-
         {
             "name": "Mobile QC",
             "request": "launch",
@@ -27,10 +25,10 @@
             ]
         },
         {
-            "name": "Mobile PROD (release mode)",
+            "name": "Mobile PROD (without Alice)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release",
+            "flutterMode": "debug",
             "program": "lib/main.dart",
             "args": [
                 "-v"

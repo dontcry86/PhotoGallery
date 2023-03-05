@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
 
+const String networkErrorCode = 'network error';
+const String systemErrorCode = 'system error';
+
 abstract class BaseState extends Equatable {
   const BaseState();
 
