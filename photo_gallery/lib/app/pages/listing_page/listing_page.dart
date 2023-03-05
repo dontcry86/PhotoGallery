@@ -47,9 +47,9 @@ class _ListingPageState extends BasePageState<ListingPage>
     setState(() {
       isBookmarkMode = !isBookmarkMode;
       if (isBookmarkMode) {
-        _bloc.switchToBookmark();
+        _bloc.switchToBookmarkView();
       } else {
-        _bloc.switchBackPhotoGallery();
+        _bloc.switchBackPhotoGalleryView();
       }
     });
   }
@@ -142,14 +142,10 @@ class _ListingPageState extends BasePageState<ListingPage>
                 );
               },
               onTapBookmark: (newBookmarkStatus) {
-                photo.isBookmark = newBookmarkStatus;
                 if (newBookmarkStatus) {
-                  CacheHandler().bookmarkPhoto(photo);
+                  _bloc.bookmarkAPhoto(photo);
                 } else {
-                  CacheHandler().unBookmarkPhoto(photo);
-                  if (isBookmarkMode) {
-                    setState(() {});
-                  }
+                  _bloc.unBookmarkAPhoto(photo, isBookmarkMode);
                 }
               },
             );

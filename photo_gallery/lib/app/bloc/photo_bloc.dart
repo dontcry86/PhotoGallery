@@ -45,12 +45,34 @@ class PhotoBloc extends Cubit<BaseState> {
     }
   }
 
-  void switchToBookmark() async {
+  void switchToBookmarkView() async {
     final data = CacheHandler().markedPhotos;
     emit(FetchingBookmarkSuccessState(result: data));
   }
 
-  void switchBackPhotoGallery() async {
+  void switchBackPhotoGalleryView() async {
     emit(FetchingPhotoSuccessState(result: photos));
+  }
+
+  void bookmarkAPhoto(Photo photo) {
+    photo.isBookmark = true;
+    CacheHandler().bookmarkPhoto(photo);
+  }
+
+  void unBookmarkAPhoto(Photo photo, bool isBookmarkMode) {
+    photo.isBookmark = false;
+
+    for (final item in (photos ?? [])) {
+      if (item.id == photo.id) {
+        item.isBookmark = false;
+        break;
+      }
+    }
+
+    CacheHandler().unBookmarkPhoto(photo);
+    if (isBookmarkMode) {
+      final data = CacheHandler().markedPhotos;
+      emit(FetchingBookmarkSuccessState(result: data));
+    }
   }
 }
