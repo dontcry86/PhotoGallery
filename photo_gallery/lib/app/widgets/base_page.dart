@@ -73,8 +73,13 @@ class BasePageState<T extends BasePage> extends State<T> {
       elevation: showElevation ? 1.0 : 0.0,
       centerTitle:
           (Theme.of(context).platform) == TargetPlatform.iOS ? true : false,
-      title: Text(title ?? '',
-          style: const TextStyle(fontSize: 20).apply(color: titleColor)),
+      title: Text(
+        title ?? '',
+        style: const TextStyle(fontSize: 20).apply(color: titleColor),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+      automaticallyImplyLeading: showLeading,
       leading: showLeading
           ? _buildLeading(
               isCloseIcon: isLeadingCloseIcon,
@@ -106,14 +111,14 @@ class BasePageState<T extends BasePage> extends State<T> {
     );
   }
 
-  Widget buildNoInternetWidget(VoidCallback ctaOnTap) {
+  Widget buildNoInternetWidget(VoidCallback? ctaOnTap) {
     return Container(
       color: Colors.white,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           EmptyStateView(
-            title: 'NO INTERNET CONNNECTION!',
+            title: 'NO INTERNET CONNECTION!',
             message:
                 'Please check the signal of your Wifi or 3G/LTE connection.',
             btnTitle: 'Retry',
@@ -133,12 +138,11 @@ class BasePageState<T extends BasePage> extends State<T> {
         title: 'EMPTY!',
         message: 'You have no photo.',
         showImage: false,
-        showButton: false,
+        btnTitle: 'Retry',
         onBtnPressed: () {
           if (ctaOnTap != null) {
             ctaOnTap();
           }
-          Navigator.pop(context);
         },
       ),
     );

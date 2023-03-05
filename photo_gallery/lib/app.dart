@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> {
     return OverlaySupport(
       child: MaterialApp(
         navigatorKey: widget.navigatorKey,
-        initialRoute: RoutePaths.sampleMenu,
+        initialRoute: RoutePaths.listing,
         onGenerateRoute: AppRouter.generateRoute,
       ),
     );

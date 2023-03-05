@@ -4,44 +4,61 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
+
         {
-            "name": "qc iOS",
+            "name": "Mobile QC",
             "request": "launch",
             "type": "dart",
+            "flutterMode": "debug",
             "program": "lib/main_qc.dart",
             "args": [
                 "-v"
             ]
         },
         {
-            "name": "uat iOS",
+            "name": "Mobile UAT",
             "request": "launch",
             "type": "dart",
+            "flutterMode": "debug",
             "program": "lib/main_uat.dart",
             "args": [
                 "-v"
             ]
         },
         {
-            "name": "prod iOS",
+            "name": "Mobile PROD (release mode)",
             "request": "launch",
             "type": "dart",
+            "flutterMode": "release",
             "program": "lib/main.dart",
             "args": [
                 "-v"
             ]
         },
         {
-            "name": "photo_gallery (profile mode)",
+            "name": "WEB CHROME QC",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "debug",
+            "program": "lib/main_qc.dart",
+            "args": [
+                "-v",
+                "-d",
+                "chrome",
+                "--web-renderer",
+                "html",
+            ]
         },
         {
-            "name": "photo_gallery (release mode)",
+            "name": "MacOS QC",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
-        }
+            "flutterMode": "debug",
+            "program": "lib/main_qc.dart",
+            "args": [
+                "-v",
+            ]
+        },
     ]
 }

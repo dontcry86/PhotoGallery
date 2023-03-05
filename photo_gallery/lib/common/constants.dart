@@ -1,2 +1,3 @@
-const String CommonErrorMessage =
-    'Đã có lỗi xảy ra, vui lòng thử lại sau ít phút';
+const String commonErrorMessage = 'An error occurred. Please try again later.';
+const String networkErrorCode = 'network error';
+const String systemErrorCode = 'system error';

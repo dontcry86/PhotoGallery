@@ -17,6 +17,7 @@ class PhotoBloc extends Cubit<BaseState> {
   }) : super(BaseInitialState());
 
   void getPhotosFromAPI() async {
+    emit(BaseLoadingState());
     try {
       final response = await useCase.getPhotos();
       if (response != null) {
@@ -26,10 +27,16 @@ class PhotoBloc extends Cubit<BaseState> {
       } else {
         throw Exception('');
       }
-    } on DioError catch (_) {
-      emit(BaseErrorState(errorMessage: CommonErrorMessage));
+    } on DioError catch (e) {
+      if (e.response == null) {
+        emit(
+            BaseErrorState(errorCode: networkErrorCode, errorMessage: 'error'));
+      } else {
+        emit(BaseErrorState(
+            errorCode: systemErrorCode, errorMessage: commonErrorMessage));
+      }
     } on Exception catch (_) {
-      emit(BaseErrorState(errorMessage: CommonErrorMessage));
+      emit(BaseErrorState(errorMessage: commonErrorMessage));
     }
   }
 
@@ -60,6 +67,7 @@ class PhotoBloc extends Cubit<BaseState> {
   }
 
   void unBookmarkAPhoto(Photo photo, bool isBookmarkMode) {
+    //emit(BaseLoadingState());
     photo.isBookmark = false;
 
     for (final item in (photos ?? [])) {

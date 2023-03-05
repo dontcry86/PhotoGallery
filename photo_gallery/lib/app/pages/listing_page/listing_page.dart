@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:photo_gallery/app/bloc/bloc.dart';
 import 'package:photo_gallery/app/widgets/base_page.dart';
 import 'package:photo_gallery/app/utils/cache_handler.dart';
+import 'package:photo_gallery/common/constants.dart';
 import 'package:photo_gallery/data/entities/photo.dart';
 import 'package:photo_gallery/di.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -79,10 +80,12 @@ class _ListingPageState extends BasePageState<ListingPage>
       bloc: _bloc,
       listener: (BuildContext context, BaseState state) {
         if (state is BaseErrorState) {
-          // show a notification at bottom of screen.
-          showSimpleNotification(const Text('Fetching failed!'),
-              background: Colors.redAccent,
-              position: NotificationPosition.bottom);
+          if (state.errorCode == networkErrorCode) {
+            // show a notification at bottom of screen.
+            showSimpleNotification(const Text('No internet connection!'),
+                background: Colors.redAccent,
+                position: NotificationPosition.bottom);
+          }
         } else if (state is FetchingPhotoSuccessState) {
           // showSimpleNotification(const Text('Fetching successfully!'),
           //     background: Colors.green, position: NotificationPosition.bottom);
@@ -122,13 +125,15 @@ class _ListingPageState extends BasePageState<ListingPage>
   }
 
   Widget _buildMainWidget(BuildContext context, {required List<Photo> photos}) {
+    bool isMobile = GetPlatform.isMobile;
+
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: _refresh,
         child: GridView.builder(
           itemCount: photos.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: isMobile ? 4 : 8),
           itemBuilder: (BuildContext context, int index) {
             final photo = photos[index];
             return CardPhotoWidget(
@@ -188,6 +193,8 @@ class _CardPhotoWidgetState extends State<CardPhotoWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final thumbnailUrl = widget.photo.thumbnailUrl ?? '';
+
     return InkWell(
       onTap: widget.onTap,
       child: Card(
@@ -195,7 +202,8 @@ class _CardPhotoWidgetState extends State<CardPhotoWidget> {
           alignment: Alignment.topRight,
           children: [
             CachedNetworkImage(
-              imageUrl: widget.photo.thumbnailUrl ?? '',
+              imageUrl: thumbnailUrl,
+              fit: BoxFit.contain,
               placeholder: (context, url) => const CircularProgressIndicator(),
               errorWidget: (context, url, error) => const Icon(Icons.error),
             ),

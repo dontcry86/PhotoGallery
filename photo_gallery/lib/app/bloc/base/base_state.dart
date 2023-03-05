@@ -12,20 +12,21 @@ class BaseInitialState extends BaseState {}
 class BaseLoadingState extends BaseState {}
 
 abstract class BaseSuccessState<T> extends BaseState {
+  final _timestamp = DateTime.now().millisecond;
   final T? result;
 
-  const BaseSuccessState({this.result});
+  BaseSuccessState({this.result});
 
   @override
-  List<Object?> get props => [result];
+  List<Object?> get props => [result, _timestamp];
 }
 
 class BaseErrorState extends BaseState {
   final _timestamp = DateTime.now().millisecond;
-
+  final String? errorCode;
   final String? errorMessage;
-  BaseErrorState({this.errorMessage});
+  BaseErrorState({this.errorCode, this.errorMessage});
 
   @override
-  List<Object?> get props => [errorMessage, _timestamp];
+  List<Object?> get props => [errorCode, errorMessage, _timestamp];
 }
