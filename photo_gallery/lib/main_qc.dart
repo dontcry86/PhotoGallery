@@ -5,7 +5,6 @@ import 'package:photo_gallery/flavor_config.dart';
 import 'package:alice/alice.dart';
 
 void main() {
-  // Pass all uncaught errors to Crashlytics.
   WidgetsFlutterBinding.ensureInitialized();
 
   FlavorConfig(

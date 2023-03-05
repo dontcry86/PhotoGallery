@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:photo_gallery/app/pages/detail_page/detail_page.dart';
 import 'package:photo_gallery/app/pages/listing_page/listing_page.dart';
-import 'package:photo_gallery/app/pages/login_page/login_page.dart';
 import 'package:photo_gallery/domain/entities/photos_with_selected_index.dart';
 import 'app/pages/sample_menu_page/sample_menu_page.dart';
 import 'app/widgets/empty_state_wiew.dart';
@@ -10,8 +9,6 @@ class RoutePaths {
   static const String prefix = '/photo_gallery';
   static const String listing = '$prefix/listing';
   static const String detail = '$prefix/detail';
-  static const String login = '/login';
-  static const String logout = '/logout';
   static const String sampleMenu = '$prefix/sample_menu';
 }
 
@@ -29,9 +26,7 @@ class AppRouter {
       case RoutePaths.listing:
         return MaterialPageRoute(
           settings: settings,
-          builder: (context) => ListingPage(
-            isHideBottomNavBar: (_) {},
-          ),
+          builder: (context) => const ListingPage(),
         );
 
       case RoutePaths.detail:
@@ -40,12 +35,6 @@ class AppRouter {
           builder: (context) => DetailPage(
             data: arguments as PhotosWithSelectedIndex?,
           ),
-        );
-
-      case RoutePaths.login:
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (context) => const LoginPage(),
         );
 
       default:

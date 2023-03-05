@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:photo_gallery/router.dart';
 
 class SampleMenuPage extends StatefulWidget {
+  const SampleMenuPage({super.key});
+
   @override
-  _SampleMenuPageState createState() {
+  State<SampleMenuPage> createState() {
     return _SampleMenuPageState();
   }
 }
@@ -12,9 +14,7 @@ class _SampleMenuPageState extends State<SampleMenuPage> {
   List<String> listMenu = [
     RoutePaths.listing,
     RoutePaths.detail,
-    RoutePaths.login,
     '/photo_gallery/test_wrong_route',
-    RoutePaths.logout,
   ];
 
   Widget _getItemGrid(String name, VoidCallback? onTap) {
@@ -49,8 +49,9 @@ class _SampleMenuPageState extends State<SampleMenuPage> {
           return Card(
               child: _getItemGrid(listMenu[index], () async {
             switch (listMenu[index]) {
-              case RoutePaths.logout:
-                Navigator.pushReplacementNamed(context, RoutePaths.logout);
+              case RoutePaths.detail:
+                Navigator.pushNamed(context, RoutePaths.detail,
+                    arguments: null);
                 break;
               default:
                 Navigator.pushNamed(

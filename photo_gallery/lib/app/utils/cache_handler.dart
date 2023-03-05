@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cache_manager/cache_manager.dart';
 import 'package:photo_gallery/data/entities/photo.dart';
 
@@ -17,27 +16,22 @@ class CacheHandler {
 
   CacheHandler._internal();
 
-  void bookmarkPhoto(Photo photo) async {
-    await _getCaches();
-
+  void bookmarkPhoto(Photo photo) {
     if (checkExistInCaches(photo) == invalidIndex) {
       markedPhotos.add(photo);
       _saveToStorage();
     }
   }
 
-  void unBookmarkPhoto(Photo photo) async {
-    await _getCaches();
-
+  void unBookmarkPhoto(Photo photo) {
     final index = checkExistInCaches(photo);
-
     if (index != invalidIndex) {
       markedPhotos.removeAt(index);
       _saveToStorage();
     }
   }
 
-  Future<void> _getCaches() async {
+  Future<void> getCaches() async {
     final caches = await ReadCache.getStringList(key: bookmarkKey);
 
     if (caches is List<String>) {
@@ -49,7 +43,7 @@ class CacheHandler {
     }
   }
 
-  void _saveToStorage() async {
+  void _saveToStorage() {
     final photosEncoded = markedPhotos.map((item) {
       return jsonEncode(item.toJson());
     }).toList();
@@ -66,6 +60,4 @@ class CacheHandler {
     }
     return invalidIndex;
   }
-
-  void clearCaches() async {}
 }

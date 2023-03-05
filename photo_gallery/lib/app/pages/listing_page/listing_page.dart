@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_gallery/app/bloc/bloc.dart';
 import 'package:photo_gallery/app/widgets/base_page.dart';
-import 'package:photo_gallery/common/cache_handler.dart';
+import 'package:photo_gallery/app/utils/cache_handler.dart';
 import 'package:photo_gallery/data/entities/photo.dart';
 import 'package:photo_gallery/di.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -12,12 +12,10 @@ import 'package:photo_gallery/domain/entities/photos_with_selected_index.dart';
 import 'package:photo_gallery/router.dart';
 
 class ListingPage extends BasePage {
-  final Function(bool) isHideBottomNavBar;
-  const ListingPage({Key? key, required this.isHideBottomNavBar})
-      : super(key: key);
+  const ListingPage({Key? key}) : super(key: key);
 
   @override
-  _ListingPageState createState() {
+  BasePageState<ListingPage> createState() {
     return _ListingPageState();
   }
 }
@@ -25,16 +23,12 @@ class ListingPage extends BasePage {
 class _ListingPageState extends BasePageState<ListingPage>
     with AutomaticKeepAliveClientMixin<ListingPage> {
   final PhotoBloc _bloc = getIt.get();
-
-  bool isFirstTimeFetching = false;
   bool isBookmarkMode = false;
 
   @override
   void onViewReady() {
-    if (!isFirstTimeFetching) {
-      isFirstTimeFetching = !isFirstTimeFetching;
-      _refresh();
-    }
+    CacheHandler().getCaches();
+    _refresh();
   }
 
   @override
@@ -43,35 +37,30 @@ class _ListingPageState extends BasePageState<ListingPage>
     super.dispose();
   }
 
-  void _refresh() {
-    _bloc.getPhotos();
+  Future<void> _refresh() async {
+    if (!isBookmarkMode) {
+      _bloc.getPhotosFromAPI();
+    }
   }
 
-  bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification.depth == 0) {
-      if (notification is UserScrollNotification) {
-        final UserScrollNotification userScroll = notification;
-        switch (userScroll.direction) {
-          case ScrollDirection.forward:
-            widget.isHideBottomNavBar(true);
-            break;
-          case ScrollDirection.reverse:
-            widget.isHideBottomNavBar(false);
-            break;
-          case ScrollDirection.idle:
-            break;
-        }
+  void _bookmarkOnTapped() {
+    setState(() {
+      isBookmarkMode = !isBookmarkMode;
+      if (isBookmarkMode) {
+        _bloc.switchToBookmark();
+      } else {
+        _bloc.switchBackPhotoGallery();
       }
-    }
-    return false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: buildAppBar(
-        title: 'Photos',
+        title: isBookmarkMode ? 'Bookmark' : 'Photos',
         showLeading: false,
         actions: [
           IconButton(
@@ -85,77 +74,58 @@ class _ListingPageState extends BasePageState<ListingPage>
     );
   }
 
-  void _bookmarkOnTapped() {
-    setState(() {
-      isBookmarkMode = !isBookmarkMode;
-    });
-  }
-
   Widget _buildBody() {
-    if (isBookmarkMode) {
-      final markedPhotos = CacheHandler().markedPhotos;
-      if (markedPhotos.isEmpty) {
-        return _buildNoContentPage();
-      } else {
-        return _buildMainPage(context, photos: markedPhotos);
-      }
-    } else {
-      return BlocListener<PhotoBloc, BaseState>(
-        bloc: _bloc,
-        listener: (BuildContext context, BaseState state) {
-          if (state is BaseErrorState) {
-            // show a notification at bottom of screen.
-            showSimpleNotification(const Text('Fetching failed!'),
-                background: Colors.redAccent,
-                position: NotificationPosition.bottom);
-          }
-
-          if (state is PhotoSuccessState) {
-            // show a notification at bottom of screen.
-            showSimpleNotification(const Text('Fetching successfully!'),
-                background: Colors.green,
-                position: NotificationPosition.bottom);
-          }
-        },
-        child: BlocBuilder<PhotoBloc, BaseState>(
-          bloc: _bloc,
-          builder: (context, state) {
-            if (state is BaseErrorState) {
-              return _buildErrorPage();
-            } else if (state is PhotoSuccessState) {
-              final photos = state.result ?? [];
-              if (photos.isEmpty) {
-                return _buildNoContentPage();
-              } else {
-                _checkCacheAndMerge(photos);
-                return _buildMainPage(context, photos: photos);
-              }
-            }
-
-            return _buildSkeletonPage();
-          },
-        ),
-      );
-    }
-  }
-
-  void _checkCacheAndMerge(List<Photo> photos) {
-    final markedPhotos = CacheHandler().markedPhotos;
-    for (final markedItem in markedPhotos) {
-      for (final photo in photos) {
-        if (markedItem.id == photo.id) {
-          photo.isBookmark = true;
-          break;
+    return BlocListener<PhotoBloc, BaseState>(
+      bloc: _bloc,
+      listener: (BuildContext context, BaseState state) {
+        if (state is BaseErrorState) {
+          // show a notification at bottom of screen.
+          showSimpleNotification(const Text('Fetching failed!'),
+              background: Colors.redAccent,
+              position: NotificationPosition.bottom);
+        } else if (state is FetchingPhotoSuccessState) {
+          // showSimpleNotification(const Text('Fetching successfully!'),
+          //     background: Colors.green, position: NotificationPosition.bottom);
         }
-      }
-    }
+      },
+      child: BlocBuilder<PhotoBloc, BaseState>(
+        bloc: _bloc,
+        builder: (context, state) {
+          if (state is BaseErrorState) {
+            return buildErrorWidget(() {
+              _refresh();
+            });
+          } else if (state is FetchingPhotoSuccessState) {
+            final photos = state.result ?? [];
+            if (photos.isEmpty) {
+              return buildNoContentWidget(() {
+                _refresh();
+              });
+            } else {
+              return _buildMainWidget(context, photos: photos);
+            }
+          } else if (state is FetchingBookmarkSuccessState) {
+            final photos = state.result ?? [];
+            if (photos.isEmpty) {
+              return buildNoContentWidget(() {
+                _refresh();
+              });
+            } else {
+              return _buildMainWidget(context, photos: photos);
+            }
+          }
+
+          return _buildSkeletonWidget();
+        },
+      ),
+    );
   }
 
-  Widget _buildMainPage(BuildContext context, {required List<Photo> photos}) {
-    return NotificationListener<ScrollNotification>(
-      onNotification: _handleScrollNotification,
-      child: Scaffold(
-        body: GridView.builder(
+  Widget _buildMainWidget(BuildContext context, {required List<Photo> photos}) {
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: GridView.builder(
           itemCount: photos.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4),
@@ -171,13 +141,15 @@ class _ListingPageState extends BasePageState<ListingPage>
                       photos: photos, selectedIndex: index),
                 );
               },
-              onTapBookmark: () {
-                final isBookmark = photo.isBookmark ?? false;
-
-                if (isBookmark) {
+              onTapBookmark: (newBookmarkStatus) {
+                photo.isBookmark = newBookmarkStatus;
+                if (newBookmarkStatus) {
                   CacheHandler().bookmarkPhoto(photo);
                 } else {
                   CacheHandler().unBookmarkPhoto(photo);
+                  if (isBookmarkMode) {
+                    setState(() {});
+                  }
                 }
               },
             );
@@ -187,42 +159,8 @@ class _ListingPageState extends BasePageState<ListingPage>
     );
   }
 
-  Widget _buildNoContentPage() {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: buildNoContentWidget(() {}),
-    );
-  }
-
-  Widget _buildSkeletonPage() {
-    //double screenWidth = MediaQuery.of(context).size.width;
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Text('Loading'),
-    );
-  }
-
-  Widget _buildErrorPage() {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: buildErrorWidget(
-        () {
-          _refresh();
-        },
-      ),
-    );
-  }
-
-  Widget _buildNoInternetPage() {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: buildNoInternetWidget(
-        () {
-          _refresh();
-        },
-      ),
-    );
+  Widget _buildSkeletonWidget() {
+    return const Center(child: Text('Loading...'));
   }
 
   @override
@@ -232,7 +170,7 @@ class _ListingPageState extends BasePageState<ListingPage>
 class CardPhotoWidget extends StatefulWidget {
   final Photo photo;
   final VoidCallback? onTap;
-  final VoidCallback? onTapBookmark;
+  final Function(bool isBookmark)? onTapBookmark;
 
   const CardPhotoWidget(
     this.photo, {
@@ -268,9 +206,11 @@ class _CardPhotoWidgetState extends State<CardPhotoWidget> {
             InkWell(
               onTap: () {
                 setState(() {
-                  widget.photo.isBookmark = !(widget.photo.isBookmark ?? false);
+                  final currentBookmarkStatus =
+                      widget.photo.isBookmark ?? false;
+                  final newBookmarkStatus = !currentBookmarkStatus;
+                  widget.onTapBookmark?.call(newBookmarkStatus);
                 });
-                widget.onTapBookmark;
               },
               child: Container(
                 width: 27,

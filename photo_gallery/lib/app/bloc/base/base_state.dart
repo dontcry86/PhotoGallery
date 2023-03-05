@@ -14,12 +14,10 @@ class BaseLoadingState extends BaseState {}
 abstract class BaseSuccessState<T> extends BaseState {
   final T? result;
 
-  final _timestamp = DateTime.now().millisecond;
-
-  BaseSuccessState({this.result});
+  const BaseSuccessState({this.result});
 
   @override
-  List<Object?> get props => [result, _timestamp];
+  List<Object?> get props => [result];
 }
 
 class BaseErrorState extends BaseState {

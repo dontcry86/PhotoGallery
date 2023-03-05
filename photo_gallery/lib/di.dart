@@ -6,7 +6,6 @@ import 'package:photo_gallery/data/networking/networking_service.dart';
 import 'package:photo_gallery/data/repositories/photo_repo.dart';
 import 'package:photo_gallery/domain/usecases/photo_usecase.dart';
 import 'package:photo_gallery/flavor_config.dart';
-// import 'di.config.dart';
 
 final getIt = GetIt.instance;
 
